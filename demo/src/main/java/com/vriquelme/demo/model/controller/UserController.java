@@ -6,8 +6,11 @@ import com.google.gson.Gson;
 import com.vriquelme.demo.model.dto.ErrorDTO;
 import com.vriquelme.demo.model.dto.UserDTO;
 import com.vriquelme.demo.model.exception.EmailNotFormatException;
+import com.vriquelme.demo.model.exception.PasswordNotCorrectFormatException;
+import com.vriquelme.demo.model.exception.UserRegisterException;
 import com.vriquelme.demo.model.helper.UserHelper;
 import com.vriquelme.demo.model.util.Constants;
+import com.vriquelme.demo.model.util.ErrorUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +37,11 @@ public class UserController {
         try {
             response = userHelper.createUser(userDTO);
         } catch (EmailNotFormatException emailNotFormatException) {
-            ErrorDTO errorDTO = new ErrorDTO();
-            errorDTO.setErrorId(Constants.CODE_ERROR_FORMAT_EMAIL_INVALID.toString());
-            errorDTO.setMessage(emailNotFormatException.toString());
-            try {
-                response = objectMapper.writeValueAsString(errorDTO);
-            } catch (JsonProcessingException e) {
-                logger.info(e.toString());
-            }
+            response = ErrorUtils.getError(Constants.CODE_ERROR_FORMAT_EMAIL_INVALID.toString(),emailNotFormatException.toString())
+        } catch (PasswordNotCorrectFormatException ex) {
+            response = ErrorUtils.getError(Constants.CODE_ERROR_INCORRECT_FORMAT_PASSWORD.toString(), ex.toString());
+        } catch (UserRegisterException userRegisterException) {
+            response = ErrorUtils.getError(Constants.CODE_ERROR_USER_REGISTER.toString(),userRegisterException.toString());
         }
         return response;
     }
