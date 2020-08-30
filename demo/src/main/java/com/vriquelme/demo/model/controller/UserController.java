@@ -37,7 +37,7 @@ public class UserController {
         try {
             response = userHelper.createUser(userDTO);
         } catch (EmailNotFormatException emailNotFormatException) {
-            response = ErrorUtils.getError(Constants.CODE_ERROR_FORMAT_EMAIL_INVALID.toString(),emailNotFormatException.toString())
+            response = ErrorUtils.getError(Constants.CODE_ERROR_FORMAT_EMAIL_INVALID.toString(),emailNotFormatException.toString());
         } catch (PasswordNotCorrectFormatException ex) {
             response = ErrorUtils.getError(Constants.CODE_ERROR_INCORRECT_FORMAT_PASSWORD.toString(), ex.toString());
         } catch (UserRegisterException userRegisterException) {
