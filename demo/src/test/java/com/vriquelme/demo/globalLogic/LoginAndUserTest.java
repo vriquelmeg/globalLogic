@@ -10,6 +10,7 @@ import com.vriquelme.demo.model.exception.EmailNotFormatException;
 import com.vriquelme.demo.model.exception.PasswordIsNullException;
 import com.vriquelme.demo.model.exception.PasswordNotCorrectFormatException;
 import com.vriquelme.demo.model.helper.LoginHelper;
+import com.vriquelme.demo.model.helper.UserHelper;
 import com.vriquelme.demo.model.repository.UserRepository;
 import com.vriquelme.demo.model.services.LoginServices;
 import com.vriquelme.demo.model.services.UserServices;
@@ -37,6 +38,9 @@ public class LoginAndUserTest {
     private LoginHelper loginHelper;
 
     @Mock
+    private UserHelper userHelper;
+
+    @Mock
     private UserRepository userRepository;
 
     @Mock
@@ -51,6 +55,7 @@ public class LoginAndUserTest {
     @Before
     public void setup() {
         this.loginHelper = new LoginHelper(loginServices, userServices, objectMapper);
+        this.userHelper = new UserHelper(userServices,objectMapper);
     }
 
     @Test
@@ -120,6 +125,35 @@ public class LoginAndUserTest {
         loginDTO.setEmail("vriquelme@gmail.com");
         loginDTO.setPassword("");
         String response = loginHelper.getLogin(loginDTO);
+
+        Assert.assertNull(response);
+    }
+
+    @Test(expected = PasswordNotCorrectFormatException.class)
+    public void loginExceptionFailedPasswordIsNotFormatTest(){
+        UUID uuid = UUID.randomUUID();
+
+        PhoneDTO phoneDTO = new PhoneDTO();
+        phoneDTO.setPhone(44554333);
+        phoneDTO.setCountryCode(3);
+        phoneDTO.setCityCode(2);
+
+        ArrayList<PhoneDTO> phoneDTOS = new ArrayList<>();
+        phoneDTOS.add(phoneDTO);
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(uuid);
+        userDTO.setName("Victor Riquelme");
+        userDTO.setEmail("vriquelmeg@gmail.com");
+        userDTO.setDateCreate(LocalDateTime.now());
+        userDTO.setDateModified(LocalDateTime.now());
+        userDTO.setLastLogin(LocalDateTime.now());
+        userDTO.setIsActive(true);
+        userDTO.setToken("");
+        userDTO.setPassword("12345");
+        userDTO.setPhonesList(phoneDTOS);
+
+        String response = userHelper.createUser(userDTO);
 
         Assert.assertNull(response);
     }
